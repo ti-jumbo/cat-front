@@ -1,0 +1,19 @@
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo com gradiente -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1F1C2C"/>
+      <stop offset="100%" stop-color="#928DAB"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Retângulo de fundo arredondado -->
+  <rect width="300" height="200" rx="25" fill="url(#bgGradient)"/>
+
+  <!-- Texto estilizado -->
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
+        font-family="'Segoe UI', sans-serif" font-size="80" font-weight="bold"
+        fill="#ffffff" letter-spacing="10">
+    CAT
+  </text>
+</svg>
