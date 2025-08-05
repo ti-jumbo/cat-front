@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogTitle, DialogContent, IconButton, Typography, Button, Grid, Snackbar, Alert, FormControl, InputLabel, Select, MenuItem, TextField, Icon, DialogActions, Stack } from "@mui/material";
+import { Box, Dialog, DialogTitle, DialogContent, IconButton, Typography, Button, Grid, Snackbar, Alert, FormControl, InputLabel, Select, MenuItem, TextField, Icon, DialogActions, Stack, Input } from "@mui/material";
 import { DataGrid, GridMenuIcon } from "@mui/x-data-grid";
 import { useEffect, useState, useCallback } from "react";
 import InfoIcon from "@mui/icons-material/Info";
@@ -10,7 +10,6 @@ import {
   STATUS_OPTIONS,
 } from "../component/status";
 import { hasValue } from "@aalencarv/common-utils";
-import { LocalizationProvider } from "@toolpad/core/AppProvider";
 
 
 export default function CallAndTask({ pathname }) {
@@ -28,6 +27,9 @@ export default function CallAndTask({ pathname }) {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState()
+  const [estimedTime, setEstimedTime] = useState('')
+  const [completionTime, setCompletionTime] = useState('')
+  const [validateTime, setValidateTime] = useState('')
 
 
   const softwares = [
@@ -81,12 +83,12 @@ export default function CallAndTask({ pathname }) {
       setOptionSetor(selectedTicket.sector)
       setOpcaoContato(selectedTicket.contactWay)
       setStatus(selectedTicket.status)
+      setEstimedTime(selectedTicket.estimedTime ? new Date(selectedTicket.estimedTime).toISOString().split('T')[0] : '')
+      setCompletionTime(selectedTicket.completionDate ? new Date(selectedTicket.completionDate).toISOString().split('T')[0] : '')
       setSubject(selectedTicket.title)
       setPriority(selectedTicket.priority)
       setContactInfo(selectedTicket.contact)
       setDescription(selectedTicket.description)
-
-
 
       setOpenDialog(true);
     }
@@ -101,6 +103,8 @@ export default function CallAndTask({ pathname }) {
   const handleCellEditCommit = useCallback(async () => {
     
       try {
+
+        
         const response = await fetch(
           `http://${process.env.REACT_APP_IP_DEV_BACK}/api/tickets/updateticket/${infId}`,
           {
@@ -109,6 +113,8 @@ export default function CallAndTask({ pathname }) {
             body: JSON.stringify({ 
               product:software,
               sector:optionSetor,
+              estimedTime:new Date(estimedTime),
+              completionDate:new Date(completionTime),
               status: status,
               description:description
             }),
@@ -130,6 +136,7 @@ export default function CallAndTask({ pathname }) {
             } : row
           )
         );
+        fetchTickets()
       } catch (error) {
         console.error("Erro ao atualizar status:", error);
         setError("Erro ao atualizar status. Tente novamente.");
@@ -138,9 +145,9 @@ export default function CallAndTask({ pathname }) {
   ;
 
   const columns = [
-    { field: "id", headerName: "ID", width: 30 },
-    { field: "sector", headerName: "Setor", width: 150 },
-    { field: "product", headerName: "Sistema", width: 100 },
+    { field: "id", headerName: "ID", width: 10 },
+    { field: "sector", headerName: "Setor", width: 100 },
+    { field: "product", headerName: "Sistema", width: 200 },
     {
       field: "status",
       headerName: "Status",
@@ -252,9 +259,51 @@ export default function CallAndTask({ pathname }) {
                           disabled
                           fullWidth
                         />
+                        
                       </FormControl>
-                      
-                      <IconButton color="info" size='large' sx={{alignItems:'end', justifyContent:'end', justifyItems:"end", }}>+</IconButton>
+                     <FormControl
+                        sx={{
+                          flex: 1,
+                          minWidth: { xs: '15%', sm: '15%', md: '15%' },
+                          px: 2,
+                          maxWidth: { xs: '30%', sm: '30%', md: '30%' },
+                        }}
+                      >
+                        <TextField
+                          id="data-previsão"
+                          label="Previsão de conclusão"
+                          type="date"
+                          error={!hasValue(estimedTime)}
+                          onBlur={(e) => setEstimedTime(new Date(e.target.value))}
+                          defaultValue={estimedTime}
+                          variant="outlined"
+                          fullWidth
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </FormControl>
+                       <FormControl
+                        sx={{
+                          flex: 1,
+                          minWidth: { xs: '15%', sm: '15%', md: '15%' },
+                          px: 2,
+                          maxWidth: { xs: '30%', sm: '30%', md: '30%' },
+                        }}
+                      >
+                        <TextField
+                          id="data-conclusão"
+                          label="Data de conclusão"
+                          type="date"
+                          error={!hasValue(completionTime)}
+                          onBlur={(e) => setCompletionTime(new Date(e.target.value))}
+                          defaultValue={completionTime}
+                          variant="outlined"
+                          fullWidth
+                          InputLabelProps={{ shrink: true }}
+                        />
+                        
+                        
+                      </FormControl>
+                    
                     </Grid>
                     <Grid
                       container spacing={1}
@@ -390,7 +439,7 @@ export default function CallAndTask({ pathname }) {
                         color="success"
                         startIcon={<SaveIcon />}
                         sx={{ borderRadius: 8 }}
-                        onClick={() => handleCellEditCommit()}
+                        onClick={() => handleCellEditCommit() }
                       >
                         Salvar
                       </Button>

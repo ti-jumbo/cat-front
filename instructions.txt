@@ -1,0 +1,11 @@
+RUN PRODUCTION BACK-END
+    1° RUN CMD java -jar CAT.jar
+    2° COPY JAR CREATE IN D:\SystemDev\SystemCallAndTask-\cat-back\target
+    3° Paste JAR in server production and execute
+
+
+RUN PRODUCTION FRONT END
+    1° npm i
+    2° npm run build
+    3° START PM2
+        1° pm2 serve build 3000 --name CatFront --spa
